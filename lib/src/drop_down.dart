@@ -51,6 +51,18 @@ class DropDown {
   /// [bottomSheetListener] that listens for BottomSheet bubbling up the tree.
   final BottomSheetListener? bottomSheetListener;
 
+  /// [initialChildSize] is the initial size of the widget when it is fully visible.
+  final double? initialChildSize;
+
+  /// [minChildSize] is the minimum allowable size for the widget.
+  final double? minChildSize;
+
+  /// [maxChildSize] is the maximum allowable size for the widget.
+  final double? maxChildSize;
+
+  /// [expand] is whether the widget should expand to fill the available space.
+  final bool? expand;
+
   DropDown({
     Key? key,
     required this.data,
@@ -65,6 +77,10 @@ class DropDown {
     this.isSearchVisible = true,
     this.dropDownBackgroundColor = Colors.transparent,
     this.bottomSheetListener,
+    this.initialChildSize,
+    this.minChildSize,
+    this.maxChildSize,
+    this.expand,
   });
 }
 
@@ -120,10 +136,10 @@ class _MainBodyState extends State<MainBody> {
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: widget.dropDown.bottomSheetListener,
       child: DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.13,
-        maxChildSize: 0.9,
-        expand: false,
+        initialChildSize: widget.dropDown.initialChildSize ?? 0.4,
+        minChildSize: widget.dropDown.minChildSize ?? 0.2,
+        maxChildSize: widget.dropDown.maxChildSize ?? 0.8,
+        expand: widget.dropDown.expand ?? false,
         builder: (BuildContext context, ScrollController scrollController) {
           return Column(
             children: <Widget>[
@@ -143,8 +159,7 @@ class _MainBodyState extends State<MainBody> {
                         child: Material(
                           child: ElevatedButton(
                             onPressed: () {
-                              List<SelectedListItem> selectedList =
-                                  widget.dropDown.data.where((element) => element.isSelected ?? false).toList();
+                              List<SelectedListItem> selectedList = widget.dropDown.data.where((element) => element.isSelected ?? false).toList();
                               List<SelectedListItem> selectedNameList = [];
 
                               for (var element in selectedList) {
@@ -198,9 +213,7 @@ class _MainBodyState extends State<MainBody> {
                                         mainList[index].isSelected = !isSelected;
                                       });
                                     },
-                                    child: isSelected
-                                        ? const Icon(Icons.check_box)
-                                        : const Icon(Icons.check_box_outline_blank),
+                                    child: isSelected ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank),
                                   )
                                 : const SizedBox(
                                     height: 0.0,
@@ -228,9 +241,7 @@ class _MainBodyState extends State<MainBody> {
 
   /// This helps when search enabled & show the filtered data in list.
   _buildSearchList(String userSearchTerm) {
-    final results = widget.dropDown.data
-        .where((element) => element.name.toLowerCase().contains(userSearchTerm.toLowerCase()))
-        .toList();
+    final results = widget.dropDown.data.where((element) => element.name.toLowerCase().contains(userSearchTerm.toLowerCase())).toList();
     if (userSearchTerm.isEmpty) {
       mainList = widget.dropDown.data;
     } else {
