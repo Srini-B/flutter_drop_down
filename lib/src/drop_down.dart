@@ -157,7 +157,8 @@ class _MainBodyState extends State<MainBody> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Material(
-                          child: ElevatedButton(
+                          color: Colors.transparent,
+                          child: TextButton(
                             onPressed: () {
                               List<SelectedListItem> selectedList = widget.dropDown.data.where((element) => element.isSelected ?? false).toList();
                               List<SelectedListItem> selectedNameList = [];
@@ -197,24 +198,38 @@ class _MainBodyState extends State<MainBody> {
                   itemBuilder: (context, index) {
                     bool isSelected = mainList[index].isSelected ?? false;
                     return InkWell(
+                      onTap: widget.dropDown.enableMultipleSelection
+                          ? null
+                          : () {
+                              widget.dropDown.selectedItems?.call([mainList[index]]);
+                              _onUnFocusKeyboardAndPop();
+                            },
                       child: Container(
                         color: widget.dropDown.dropDownBackgroundColor,
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
                           child: ListTile(
                             title: widget.dropDown.listItemBuilder?.call(index) ??
                                 Text(
                                   mainList[index].name,
                                 ),
                             trailing: widget.dropDown.enableMultipleSelection
-                                ? GestureDetector(
-                                    onTap: () {
+                                ? Checkbox(
+                                    value: isSelected,
+                                    onChanged: (po) {
                                       setState(() {
                                         mainList[index].isSelected = !isSelected;
                                       });
                                     },
-                                    child: isSelected ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank),
+                                    activeColor: Theme.of(context).colorScheme.primary,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
                                   )
+
+                                /*  isSelected
+                                        ? const Icon(Icons.check_box)
+                                        : const Icon(
+                                            Icons.check_box_outline_blank) */
+
                                 : const SizedBox(
                                     height: 0.0,
                                     width: 0.0,
@@ -222,12 +237,6 @@ class _MainBodyState extends State<MainBody> {
                           ),
                         ),
                       ),
-                      onTap: widget.dropDown.enableMultipleSelection
-                          ? null
-                          : () {
-                              widget.dropDown.selectedItems?.call([mainList[index]]);
-                              _onUnFocusKeyboardAndPop();
-                            },
                     );
                   },
                 ),
@@ -257,9 +266,9 @@ class _MainBodyState extends State<MainBody> {
   }
 
   void _setSearchWidgetListener() {
-    TextFormField? _searchField = widget.dropDown.searchWidget;
-    _searchField?.controller?.addListener(() {
-      _buildSearchList(_searchField.controller?.text ?? '');
+    TextFormField? searchField = widget.dropDown.searchWidget;
+    searchField?.controller?.addListener(() {
+      _buildSearchList(searchField.controller?.text ?? '');
     });
   }
 }
