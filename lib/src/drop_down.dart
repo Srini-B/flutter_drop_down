@@ -145,6 +145,16 @@ class _MainBodyState extends State<MainBody> {
           return Column(
             children: <Widget>[
               Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey,
+                    ),
+                    height: 5,
+                    width: 100,
+                  )),
+              Padding(
                 padding:
                     const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
                 child: Row(
